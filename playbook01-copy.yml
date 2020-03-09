@@ -1,0 +1,26 @@
+---
+- name: Playbook to copy moveme.txt into our hosts
+  hosts: planetexpress   # <-- this is the GROUP from out inventory file
+  gather_facts: yes # we need to discuss gather_facts! controls running setup.py (which sets up NOTHING)
+
+  vars:
+          imagechecksum: da39a3ee5e6b4b0d3255bfef95601890afd80709
+
+  tasks:
+          - name: Copy a file from controller to remote hosts
+            copy:
+                    dest: ~/    # we want our file moved into remove hosts home directory
+                    src: ~/ans/files/moveme.txt   # this is the file on the CONTROLLER to move into the remote HOSTS
+            register: results
+
+          # Ansible is NOT for printing to the screen
+          # HOWEVER... we MUST print to the screen to pick through the JSON returned to modules
+          - name: show the value of results
+            debug:
+                    var: results
+                    verbosity: 1
+
+          - name: FAIL if checksum is not valid
+            fail:
+                    msg: "The copied file does not meet a valid checksum"
+            when: results.checksum != imagechecksum

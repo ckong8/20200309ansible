@@ -1,0 +1,11 @@
+This document is rendered for the ship {{ ship_name }}
+
+The type of ship has been designated as {{ ship_type }}
+
+The engines are of type {{ engines }}
+
+{% if ship_price_in_beans >= 10 %}
+Wow that is a one expensive ship!
+{% else %}
+That ship didn't cost too much did it?
+{% endif %}

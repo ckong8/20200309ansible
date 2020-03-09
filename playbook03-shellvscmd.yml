@@ -1,0 +1,10 @@
+---
+- name: Shell vs Command module
+  hosts: planetexpress
+
+  tasks:
+          - name: command module
+            command: "echo $HOME > example.txt"
+
+          - name: shell module
+            shell: "echo $HOME > example.txt"

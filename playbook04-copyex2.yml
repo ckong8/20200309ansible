@@ -1,0 +1,2 @@
+---
+[ { name: another copy example, hosts: planetexpress, tasks: [ { name: using the copy module, copy: { content: backed up config, dest: "~/backedupconfig-{{ ansible_date_time.epoch }}.txt" } } ] } ]
