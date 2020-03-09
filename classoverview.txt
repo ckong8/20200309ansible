@@ -2,14 +2,12 @@
   instructor:
     name: 
     email: 
-  class: 8:30 to 4:45ish?
+  class: 8:30 to 5:00
   repo: https://github.com/rzfeeser/20200309ansible  # create on 1st break
 
 
   Monday Assignment:
   - RIGHT NOW (DUE FOR TUESDAY MORNING @830 EASTERN)
-    - Lab 4 (optional) <- New inventory types... ex: YAML inventory 
-    - Lab 7 (optional) <- understanding ansible is state management
     - Lab 9 (everyone) <- debug, loops and lists
     - Lab 10 (everyone) <- YAML and Jinja practice
     - Lab 12 (optional) <- understanding RAW module
