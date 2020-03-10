@@ -1,0 +1,19 @@
+Class Links:
+
+Ansible vars:
+https://docs.ansible.com/ansible/latest/user_guide/playbooks_variables.html
+
+Ansible shell module:
+https://docs.ansible.com/ansible/latest/modules/shell_module.html#shell-module
+
+Ansible command module:
+https://docs.ansible.com/ansible/latest/modules/command_module.html#command-module
+
+Ansible copy module:
+https://docs.ansible.com/ansible/latest/modules/copy_module.html
+
+Ansible global config file:
+https://github.com/ansible/ansible/blob/devel/examples/ansible.cfg
+
+YAML spec:
+https://yaml.org/spec/1.2/spec.html

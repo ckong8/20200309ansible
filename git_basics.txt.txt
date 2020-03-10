@@ -1,0 +1,6 @@
+120  git init
+121  git add *
+  122  git config user.name "some user name you want to provide"
+  123  git config user.email "email@fake.org"
+124  git commit -m "end of day 1"
+134  git push https://github.com/<your github account>/<repo name> master

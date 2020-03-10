@@ -1,0 +1,50 @@
+- name: Ansible
+  instructor:
+    name: 
+    email: 
+  class: 8:30 to 5:00
+  repo: https://github.com/rzfeeser/20200309ansible  # create on 1st break
+
+
+  Monday Assignment:
+  - RIGHT NOW (DUE FOR TUESDAY MORNING @830 EASTERN)
+    - Lab 9 (everyone) <- debug, loops and lists
+    - Lab 10 (everyone) <- YAML and Jinja practice
+    - Lab 12 (optional) <- understanding RAW module
+    - Lab 13 (optional)
+    - Lab 14 - 19 (everyone) <- practice with playbook basics
+    ** if you can't get all this done NO problems!
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  Be sure to cover...
+  F5, Radware, Check Point, Palo Alto networks, and Gigamon
+  Juniper, Cisco Nexus, Arista, Arista cumulus
+  Generic rest services
+  
+  Var manipulation:
+    - Jinja
+    - dict to list formatting
+    - playbook example:
+        - issue command
+        - create report
+        - post to REST service
+
