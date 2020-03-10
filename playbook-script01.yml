@@ -1,0 +1,20 @@
+---
+- name: A playbook to run python scripts
+  hosts: localhost
+  gather_facts: yes
+
+  tasks:
+          - name: Copy a script to the remote host and execute it
+            script: ~/ans/scripts/nasaLookup.py
+            args:
+                    executable: /usr/bin/python3
+            register: results
+
+          - name: show the JSON produced by the script module
+            debug:
+                    var: results.stdout.split("'")
+
+          - name: Show the astros on the screen
+            debug:
+                    var: results.stdout.split("'")[1:6:2]
+

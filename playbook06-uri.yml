@@ -1,0 +1,17 @@
+---
+- name: do API lookup with native ansible
+  hosts: localhost
+
+  vars:
+    urlToLookup: "http://api.open-notify.org/astros.json"
+
+  tasks:
+  - name: Check that you can connect (GET) to a page and it returns a status 200
+    uri:
+      url: "{{ urlToLookup }}"
+    register: results
+
+  - name: Show the results that are returned
+    debug:
+            var: item.name
+    loop: "{{ results.json.people }}"
