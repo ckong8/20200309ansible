@@ -1,0 +1,6 @@
+[eosswitches]
+ans-839-sw1
+ans-839-sw2
+
+[eosswitches:vars]
+ansible_network_os=eos 
