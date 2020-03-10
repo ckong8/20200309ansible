@@ -1,0 +1,29 @@
+---
+- name: Network Playbook
+  hosts: all
+  gather_facts: yes
+
+  vars:
+          ansible_connection: network_cli
+          ansible_network_os: eos
+          ansible_become: yes
+          ansible_become_method: enable
+          ansible_user: admin
+          ansible_ssh_pass: alta3
+
+  tasks:
+          - name: Display ansible_facts
+            debug:
+                    var: ansible_facts
+
+          - name: Gather EOS facts
+            eos_facts:
+                    gather_subset:
+                            - all
+                            #- !hardware
+                            ###register: results
+
+          - name: Display gathered facts
+            debug:
+                    #var: results
+                    var: ansible_facts
