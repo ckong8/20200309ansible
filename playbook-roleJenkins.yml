@@ -1,0 +1,8 @@
+---
+- name: A playbook that uses a Jenkins role
+  hosts: fry
+  gather_facts: yes
+  become: yes
+
+  roles:
+          - geerlingguy.jenkins

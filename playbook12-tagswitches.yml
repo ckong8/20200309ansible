@@ -1,0 +1,55 @@
+---
+- name: A playbook with tags to run against Arista switches
+  hosts: allvendors
+
+  vars_files:
+          - ~/switch.creds
+
+  tasks:
+          - name: configure the login banner
+            eos_banner:
+                    banner: login
+                    text: |
+                            this is my login banner
+                            that contains a multiline
+                            string
+                    state: present
+            tags:
+                    - lb
+
+          - name: run show version on remote devices
+            cli_command:
+                    command: show version
+            tags:
+                    - backupop
+            # this works because we set ansible_network_os
+            # https://github.com/ansible/ansible/blob/devel/docs/docsite/rst/network/user_guide/platform_index.rst
+            #
+          - name: run a command
+            setup: 
+            # command: date "+%Y-%m-%d"
+            vars:
+                  ansible_connection: local
+            tags:
+                    - backupop
+
+          - name: Create dir to save switch config backups
+            file:
+              path: ~/ans/backup/{{ ansible_date_time.date }}/
+              state: directory    # Playbook will FAIL without this directory
+            tags:
+                    - backupop
+
+          - name: Arista Config Save
+            copy:
+              content: "{{ ansible_net_config }}"
+              dest: "~/ans/backup/{{ ansible_date_time.date }}/{{ inventory_hostname }}-config.backup"
+            tags:
+                    - backupop
+
+          - name: Arista Archival Process
+            archive:
+              path: "~/ans/backup/{{ ansible_date_time.date }}/{{ inventory_hostname }}-config.backup"
+              remove: True     # removes the original file
+            tags:
+                    - backupop
