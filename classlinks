@@ -20,3 +20,6 @@ https://yaml.org/spec/1.2/spec.html
 
 Values for ansible_network_os:
 https://github.com/ansible/ansible/blob/devel/docs/docsite/rst/network/user_guide/platform_index.rst
+
+Palo Alto Module Overview:
+https://buildmedia.readthedocs.org/media/pdf/ansible-pan/latest/ansible-pan.pdf
