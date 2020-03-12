@@ -1,0 +1,16 @@
+---
+- name: example with dict.item
+  hosts: localhost
+
+  vars:
+          loopme:
+                  startrek: picard
+                  deepspace: nine
+                  captain: kate
+
+  tasks:
+          - name: debug
+            debug:
+                    msg: "{{ item[0] }}"
+            loop: "{{ loopme.item()|list }}"
+

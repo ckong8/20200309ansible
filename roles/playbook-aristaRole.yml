@@ -1,0 +1,14 @@
+---
+- name: Using my new role
+  hosts: allvendors
+  # collect facts about controller
+  # so that ansible_date_time is defined
+  gather_facts: yes
+
+  # location on the controller
+  vars_files:
+          - ~/switch.creds
+
+  roles:
+          - bb_arista_backup
+

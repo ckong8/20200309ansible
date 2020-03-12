@@ -1,0 +1,25 @@
+---
+# tasks file for bb_arista_backup
+- name: Arista Fact Collection
+  eos_facts:
+    gather_subset: all  # IMPORTANT! Look at the Return values at the bottom of the eos_facts module
+
+- name: run local gather_facts on controller
+  setup:
+  vars:
+         ansible_connection: local
+
+- name: Create dir to save switch config backups
+  file:
+    path: ~/ans/backup/{{ ansible_date_time.date }}/
+    state: directory    # Playbook will FAIL without this directory
+
+- name: Arista Config Save
+  copy:
+    content: "{{ ansible_net_config }}"
+    dest: "~/ans/backup/{{ ansible_date_time.date }}/{{ inventory_hostname }}-config.backup"
+
+- name: Arista Archival Process
+  archive:
+    path: "~/ans/backup/{{ ansible_date_time.date }}/{{ inventory_hostname }}-config.backup"
+    remove: True     # removes the original file
