@@ -1,0 +1,37 @@
+---
+ - name: Playbook with the register keyword
+   hosts: planetexpress
+
+   tasks:
+     - name: "Issue a trivial command"
+       command: ls /lib/
+       register: contentz_lib
+
+     - name: "debug - display data returned"
+       debug:
+         msg: "{{ contentz_lib }}"
+         verbosity: 1
+
+     - name: "debug - standard error"
+       debug:
+         msg: "{{ contentz_lib.stderr }}"
+         verbosity: 1
+
+     - name: "debug - standard out"
+       debug:
+         msg: "{{ contentz_lib.stdout }}"
+         verbosity: 1
+
+     # var has a mutually exclusive parameter msg vs var (only 1 may be present!)
+     # var only wants a variable, and will disclose the value on the screen
+     # msg wants an entire message
+     - name: "debug - standard out_lines"
+       debug:
+         var: contentz_lib.stdout_lines.__len__()
+         verbosity: 1
+
+     - name: make playbook fail if the correct number of files / folders are not present
+       fail:
+               msg: "The correct number of files / folders not present"
+       when: contentz_lib.stdout_lines.__len__() < 10
+
