@@ -1,0 +1,21 @@
+---
+- name: Palo Alto Playbook
+  hosts: localhost
+  connection: local
+  gather_facts: no
+
+  vars:
+    provider:
+          username: admin
+          password: qwerty
+          ip_address: 10.10.2.3
+
+          #roles:
+          # - paloaltonetworks.paloaltonetworks
+
+  tasks:
+          - name: Get facts
+            panos_facts:
+                    provider: '{{ provider }}'
+                    gather_subset: ['config']
+  
