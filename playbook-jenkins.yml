@@ -43,7 +43,7 @@
             repo: deb https://pkg.jenkins.io/debian-stable binary/
             state: "{{ jenkins_state }}"
             update_cache: true
-          when: jenkins_repo_url | default(false)
+        ## is this when necessary?  when: jenkins_repo_url | default(false)
 
         # the versions of jenkins are available via
         # http://pkg.jenkins-ci.org/debian-stable/
@@ -54,22 +54,44 @@
             dest: "/tmp/jenkins_{{ jenkins_version }}_all.deb"
           when: jenkins_version is defined
 
-        - name: Install our specific version of Jenkins
-          apt:
-            deb: "/tmp/jenkins_{{ jenkins_version }}_all.deb"
-            state: "{{ jenkins_state }}"
-          when: jenkins_version is defined
+        - name: Install block
+          block:
+            - name: Install our specific version of Jenkins
+              apt:
+                deb: "/tmp/jenkins_{{ jenkins_version }}_all.deb"
+                state: "{{ jenkins_state }}"
+              when: jenkins_version is defined
+
+          rescue:
+            # edit the port that Jenkins runs on by editing
+            # the Jenkins configuration file 
+            - name: Set the port on which Jenkins runs
+              lineinfile:
+                backrefs: true
+                dest: "{{ jenkins_init_file }}"
+                regexp: '^HTTP_PORT='
+                line: 'HTTP_PORT={{ jenkins_http_port }}'
+              register: jenkins_http_config            - 
+  
+        - name: Install block
+          block:
+            - name: Install our specific version of Jenkins
+              apt:
+                deb: "/tmp/jenkins_{{ jenkins_version }}_all.deb"
+                state: "{{ jenkins_state }}"
+              when: jenkins_version is defined
 
         # edit the port that Jenkins runs on by editing
         # the Jenkins configuration file 
         - name: Set the port on which Jenkins runs
-          lineinfile:
+          lineinfile:    
             backrefs: true
             dest: "{{ jenkins_init_file }}"
             regexp: '^HTTP_PORT='
             line: 'HTTP_PORT={{ jenkins_http_port }}'
-          register: jenkins_http_config
-
+          register: jenkins_http_config   
+         
+         
         - name: restart jenkins
           service:
             name: jenkins
@@ -77,7 +99,7 @@
 
         - name: let jenkins come up for the first time
           pause:
-                  seconds: 5
+                  seconds: 30
 
         # grab initial Admin password
         - name: Get init password Jenkins
