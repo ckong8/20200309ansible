@@ -12,9 +12,9 @@
   # http://pkg.jenkins-ci.org/redhat-stable/
 
   vars:
+          jenkins_state: present  # present or absent
           jenkins_version: "2.204.5"  # 2.204.5 released on 2020/03/07
           jenkins_pkg_url: "http://pkg.jenkins-ci.org/debian-stable/binary"
-          jenkins_package_state: present # change to absent to remove
           jenkins_http_port: 8087  # port to run jenkins on
           jenkins_init_file: /etc/default/jenkins # contains global settings for jenkins
 
@@ -29,21 +29,21 @@
               - curl
               - apt-transport-https
               - gnupg
-            state: present
+            state: "{{ jenkins_state }}"
 
         # add Jenkins repo key per 
         # http://pkg.jenkins-ci.org/debian-stable/
         - name: Add Jenkins apt repository key
           apt_key:
             url: https://pkg.jenkins.io/debian-stable/jenkins.io.key
-            state: present
+            state: "{{ jenkins_state }}"
 
         - name: Add Jenkins apt repository
           apt_repository:
             repo: deb https://pkg.jenkins.io/debian-stable binary/
-            state: present
+            state: "{{ jenkins_state }}"
             update_cache: true
-          when: jenkins_repo_url | default(false)
+        ## is this when necessary?  when: jenkins_repo_url | default(false)
 
         # the versions of jenkins are available via
         # http://pkg.jenkins-ci.org/debian-stable/
@@ -54,59 +54,60 @@
             dest: "/tmp/jenkins_{{ jenkins_version }}_all.deb"
           when: jenkins_version is defined
 
-          #        - name: Check if we downloaded a specific version of Jenkins.
-          #          stat:
-          #            path: "/tmp/jenkins_{{ jenkins_version }}_all.deb"
-          #          register: specific_version
-          #          when: jenkins_version is defined
+        - name: Install block
+          block:
+            - name: Install our specific version of Jenkins
+              apt:
+                deb: "/tmp/jenkins_{{ jenkins_version }}_all.deb"
+                state: "{{ jenkins_state }}"
+              when: jenkins_version is defined
 
-        - name: Install our specific version of Jenkins
-          apt:
-            deb: "/tmp/jenkins_{{ jenkins_version }}_all.deb"
-            state: "{{ jenkins_package_state }}"
-          when: jenkins_version is defined
-          #notify: configure default users
+          rescue:
+            # edit the port that Jenkins runs on by editing
+            # the Jenkins configuration file 
+            - name: Set the port on which Jenkins runs
+              lineinfile:
+                backrefs: true
+                dest: "{{ jenkins_init_file }}"
+                regexp: '^HTTP_PORT='
+                line: 'HTTP_PORT={{ jenkins_http_port }}'
+              register: jenkins_http_config            - 
+  
+        - name: Install block
+          block:
+            - name: Install our specific version of Jenkins
+              apt:
+                deb: "/tmp/jenkins_{{ jenkins_version }}_all.deb"
+                state: "{{ jenkins_state }}"
+              when: jenkins_version is defined
 
-        #- name: Ensure Jenkins is installed
-        #  apt:
-        #    name: jenkins
-        #    state: "{{ jenkins_package_state }}"
-        #  #notify: configure default users
-       
         # edit the port that Jenkins runs on by editing
         # the Jenkins configuration file 
         - name: Set the port on which Jenkins runs
-          lineinfile:
+          lineinfile:    
             backrefs: true
             dest: "{{ jenkins_init_file }}"
             regexp: '^HTTP_PORT='
             line: 'HTTP_PORT={{ jenkins_http_port }}'
-          register: jenkins_http_config
-          notify: restart jenkins
-
-        # display the initial Admin password on the screen
-        - name: Get init password Jenkins
-          shell: cat /var/lib/jenkins/secrets/initialAdminPassword
-          changed_when: false
-          register: result
-    
-        - name: Print init password Jenkins
-          debug:
-            var: result.stdout
-
-
-  handlers:
-        
+          register: jenkins_http_config   
+         
+         
         - name: restart jenkins
           service:
             name: jenkins
             state: restarted
-        
-            #        - name: configure default users
-            #          template:
-            #                  src: basic-security.groovy.j2
-            #                  dest: "{{ jenkins_home }}/init.groovy.d/basic-security.groovy"
-            #                  owner: "{{ jenkins_process_user }}"
-            #                  group: "{{ jenkins_process_group }}"
-            #                  mode: 0775
-            #          register: jenkins_users_config
+
+        - name: let jenkins come up for the first time
+          pause:
+                  seconds: 30
+
+        # grab initial Admin password
+        - name: Get init password Jenkins
+          shell: cat /var/lib/jenkins/secrets/initialAdminPassword
+          changed_when: false
+          register: result
+
+        # display the initial Admin password on the screen
+        - name: Print init password Jenkins
+          debug:
+            var: result.stdout
