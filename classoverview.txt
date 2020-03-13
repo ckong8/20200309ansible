@@ -7,14 +7,18 @@
   
   Lingering Questions...
     Q: ansible_connection vs connection? Whats the difference?
-    Q: beyond vault <- general cred hiding mechanism when internal
+    X: beyond vault <- general cred hiding mechanism when internal
     cred storage is deployed
     Q: Can we point our Galaxy to internal object store like Artifactory?
     Q: Can you review Git / GitHub (yes, friday we'll do a lab)
-    Q: Demo syntax surrounding vars "{{ }}" vs {{ }}
+    X: Demo syntax surrounding vars "{{ }}" vs {{ }}
     Q: Multiple password combos
     Q: Cover parse textfsm plugin
-    
+  
+  Friday Assignment:
+    - Lab 50 - Ansible and textfsm
+    - Lab 51 - GitHub
+    - Lab 52 - Jenkins (continuous deployment)
 
   Thursday Assignment:
     - Lab 26 **STOP AT STEP 35** - YAML, JSON, Dynamic, and Cloud Inventories
@@ -25,8 +29,6 @@
     - Lab - Design a module with Python
     - Lab 42 - Ansible Vault
     - Lab 38 - Lookup Plugin
-
-    
 
   Wednesday Assignment
     - Lab 33 - Understanding differences between v2.8 and v2.9

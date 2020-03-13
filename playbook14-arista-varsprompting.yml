@@ -9,7 +9,16 @@
           ansible_become: yes
           ansible_become_method: enable
           ansible_user: admin
-          ansible_ssh_pass: alta3
+          # we don't want to expose this in our playbook
+          # so we will ask the user to key it in before run time
+          # this technique is NOT automation friendly!
+          #ansible_ssh_pass: alta3
+
+  vars_prompt:
+          # this the name of the VARIABLE we want to define
+          - name: ansible_ssh_pass
+            prompt: "What is the password that you'd like to use to connect to the EOS switches?"
+            private: no # default is yes (do you want to reveal text as it is typed in)
 
   tasks:
           - name: Display ansible_facts

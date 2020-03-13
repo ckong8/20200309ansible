@@ -3,18 +3,14 @@
   hosts: allvendors
   gather_facts: yes
 
-  vars:
-          ansible_connection: network_cli
-          ansible_network_os: eos
-          ansible_become: yes
-          ansible_become_method: enable
-          ansible_user: admin
-          ansible_ssh_pass: alta3
+  vars_files:
+          - ~/netcreds.yml
 
   tasks:
           - name: Display ansible_facts
             debug:
                     var: ansible_facts
+            no_log: true
 
           - name: Gather EOS facts
             eos_facts:
@@ -27,3 +23,8 @@
             debug:
                     #var: results
                     var: ansible_facts
+
+          - name: log a credential
+            debug:
+                    var: ansible_ssh_pass
+            no_log: yes
