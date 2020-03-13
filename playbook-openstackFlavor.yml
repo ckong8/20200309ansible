@@ -1,0 +1,100 @@
+---
+- name: First OpenStack Playbook to Retrieve Flavors
+  hosts: localhost
+
+  vars:
+    student_number: 999
+    student_name: rzfeeser2
+    public_key: "{{ lookup('file', '~/.ssh/id_rsa.pub') }}"
+
+  tasks:
+  
+  - name: PRECHECK BLOCK (get the facts)
+    block:
+
+    - name: Retrieve a list of available flavors
+      os_flavor_info:
+        cloud: alta3cloud
+      register: result
+
+    - name: Check to see if the correct flavor exists
+      fail:
+        msg: "Something appears wrong with the available flavors"
+      when: result.openstack_flavors[0].name != "m1.tiny"
+
+    - debug:
+        msg: "{{ result.openstack_flavors[0].name }}"
+        verbosity: 1
+
+    - debug:
+        var: public_key
+        verbosity: 1
+
+    rescue:
+    - name: PRECHECK FAILED! EXITING...
+      fail:
+        msg: "PRECHECK BLOCK FAILED. NOTHING TO CLEAN UP. EXITING..."
+    
+
+  - name: MAINTENANCE BLOCK (work to do)
+    block:
+
+    - name: Create a keypair
+      os_keypair:
+        cloud: alta3cloud
+        state: present
+        name: "ansible-key-{{ student_name }}"
+        public_key: "{{ public_key }}"
+  
+    - name: Create VM
+      os_server:
+        cloud: alta3cloud
+        state: present
+        name: "ansible-{{ student_number }}"
+        image: cirros   # mimic a fail with radical-cirros
+        flavor: "{{ result.openstack_flavors[0].name }}"
+        key_name: "ansible-key-{{ student_name }}"
+        meta:
+          type: ansible
+          class: ansiblecustom
+          student_name: rzfeeser
+          configured: "false"
+        auto_ip: no
+        wait: yes
+        timeout: 600
+      register: instances
+  
+    - name: Show the json returned to os_server
+      debug:
+        var: instances
+        verbosity: 1
+
+    rescue:
+    - name: ROLLING BACK! Removing keypair...
+      os_keypair:
+        cloud: alta3cloud
+        state: absent
+        name: "ansible-key-{{ student_name }}"
+        public_key: "{{ public_key }}"
+
+    - name: ROLLING BACK! Removing VM...
+      os_server:
+        cloud: alta3cloud
+        state: absent
+        name: "ansible-{{ student_number }}"
+        image: cirros
+        flavor: "{{ result.openstack_flavors[0].name }}"
+        key_name: "ansible-key-{{ student_name }}"
+        meta:
+          type: ansible
+          class: ansiblecustom
+          student_name: rzfeeser
+          configured: "false"
+        auto_ip: no
+        wait: yes
+        timeout: 600
+      register: instances
+
+    - name: exit maintenance block
+      fail:
+        msg: "FAILED MAINTENANCE BLOCK! ROLLBACK COMPLETED. EXITING..." 
